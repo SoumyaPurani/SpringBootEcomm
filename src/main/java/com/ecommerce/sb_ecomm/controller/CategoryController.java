@@ -2,7 +2,10 @@ package com.ecommerce.sb_ecomm.controller;
 
 import com.ecommerce.sb_ecomm.model.Category;
 import com.ecommerce.sb_ecomm.service.CategoryService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,8 +30,12 @@ public class CategoryController {
     }
 
     @DeleteMapping("/api/admin/categories/{category_id}")
-    public String deleteCategory(@PathVariable Long category_id) {
-        String status = categoryService.deleteCategory(category_id);
-        return status;
+    public ResponseEntity<String> deleteCategory(@PathVariable Long category_id) {
+        try {
+            String status = categoryService.deleteCategory(category_id);
+            return new ResponseEntity<>(status, HttpStatus.OK);
+        } catch (ResponseStatusException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
     }
 }
