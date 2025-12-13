@@ -17,9 +17,9 @@ import lombok.NoArgsConstructor;
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long category_id;
+    private Long categoryId;
 
     @NotBlank
     @Size(min = 5, message = "Category name must contain at least 5 characters")
-    private String category_name;
+    private String categoryName;
 }
