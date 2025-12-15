@@ -3,11 +3,15 @@ package com.ecommerce.sb_ecomm.service;
 import com.ecommerce.sb_ecomm.exceptions.APIException;
 import com.ecommerce.sb_ecomm.exceptions.ResourceNotFoundException;
 import com.ecommerce.sb_ecomm.model.Category;
+import com.ecommerce.sb_ecomm.payload.CategoryDTO;
+import com.ecommerce.sb_ecomm.payload.CategoryResponse;
 import com.ecommerce.sb_ecomm.repositories.CategoryRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CategoryServiceImpl implements CategoryService {
@@ -15,12 +19,21 @@ public class CategoryServiceImpl implements CategoryService {
     @Autowired
     private CategoryRepository categoryRepository;
 
+    @Autowired
+    private ModelMapper modelMapper;
+
     @Override
-    public List<Category> getAllCategories() {
+    public CategoryResponse getAllCategories() {
+        List<Category> categories = categoryRepository.findAll();
         if(categoryRepository.findAll().isEmpty()) {
             throw new APIException("No Category found");
         }
-        return categoryRepository.findAll();
+        List<CategoryDTO> categoryDTOS = categories.stream()
+                .map(category -> modelMapper.map(category, CategoryDTO.class))
+                .toList();
+        CategoryResponse categoryResponse = new CategoryResponse();
+        categoryResponse.setCategories(categoryDTOS);
+        return categoryResponse;
     }
 
     @Override
