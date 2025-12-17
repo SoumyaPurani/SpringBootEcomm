@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class CategoryServiceImpl implements CategoryService {
@@ -48,18 +47,19 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public String deleteCategory(Long category_id) {
+    public CategoryDTO deleteCategory(Long category_id) {
         Category category = categoryRepository.findById(category_id).orElseThrow(() -> new ResourceNotFoundException("Category", "Category id", category_id));
         categoryRepository.delete(category);
-        return category.getCategoryId() + " has been deleted";
+        return modelMapper.map(category, CategoryDTO.class);
     }
 
     @Override
-    public Category updateCategory(Category category, Long category_id) {
+    public CategoryDTO updateCategory(CategoryDTO categoryDTO, Long category_id) {
         Category savedCategory = categoryRepository.findById(category_id).orElseThrow(() -> new ResourceNotFoundException("Category", "Category id", category_id));
+        Category category = modelMapper.map(categoryDTO, Category.class);
         category.setCategoryId(category_id);
         savedCategory = categoryRepository.save(category);
-        return savedCategory;
+        return modelMapper.map(savedCategory, CategoryDTO.class);
     }
 
 
